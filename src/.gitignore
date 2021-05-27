@@ -1,0 +1,6 @@
+.idea/
+cmake-build-debug/*
+!cmake-build-debug/rife-ncnn-vulkan.exe
+
+cmake-build-release/*
+!cmake-build-release/rife-ncnn-vulkan.exe

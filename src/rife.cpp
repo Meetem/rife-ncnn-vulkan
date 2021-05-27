@@ -356,7 +356,7 @@ int RIFE::process(const ncnn::Mat& in0image, const ncnn::Mat& in1image, float ti
     const unsigned char* pixel1data = (const unsigned char*)in1image.data;
     const int w = in0image.w;
     const int h = in0image.h;
-    const int channels = 3;//in0image.elempack;
+    const int channels = in0image.elempack;
 
 //     fprintf(stderr, "%d x %d\n", w, h);
 
@@ -378,14 +378,19 @@ int RIFE::process(const ncnn::Mat& in0image, const ncnn::Mat& in1image, float ti
     ncnn::Mat in1;
     if (opt.use_fp16_storage && opt.use_int8_storage)
     {
-        in0 = ncnn::Mat(w, h, (unsigned char*)pixel0data, (size_t)channels, 1);
-        in1 = ncnn::Mat(w, h, (unsigned char*)pixel1data, (size_t)channels, 1);
+       if(channels == 3){
+          in0 = ncnn::Mat(w, h, (unsigned char*)pixel0data, (size_t)channels, 1);
+          in1 = ncnn::Mat(w, h, (unsigned char*)pixel1data, (size_t)channels, 1);
+       }else{
+          in0 = ncnn::Mat::from_pixels(pixel0data, ncnn::Mat::PIXEL_BGRA2RGB, w, h);
+          in1 = ncnn::Mat::from_pixels(pixel1data, ncnn::Mat::PIXEL_BGRA2RGB, w, h);
+       }
     }
     else
     {
 #if _WIN32
-        in0 = ncnn::Mat::from_pixels(pixel0data, ncnn::Mat::PIXEL_BGR2RGB, w, h);
-        in1 = ncnn::Mat::from_pixels(pixel1data, ncnn::Mat::PIXEL_BGR2RGB, w, h);
+        in0 = ncnn::Mat::from_pixels(pixel0data, ncnn::Mat::PIXEL_BGRA2RGB, w, h);
+        in1 = ncnn::Mat::from_pixels(pixel1data, ncnn::Mat::PIXEL_BGRA2RGB, w, h);
 #else
         in0 = ncnn::Mat::from_pixels(pixel0data, ncnn::Mat::PIXEL_RGB, w, h);
         in1 = ncnn::Mat::from_pixels(pixel1data, ncnn::Mat::PIXEL_RGB, w, h);
@@ -1146,7 +1151,7 @@ int RIFE::process(const ncnn::Mat& in0image, const ncnn::Mat& in1image, float ti
         if (!(opt.use_fp16_storage && opt.use_int8_storage))
         {
 #if _WIN32
-            out.to_pixels((unsigned char*)outimage.data, ncnn::Mat::PIXEL_RGB2BGR);
+            out.to_pixels((unsigned char*)outimage.data, ncnn::Mat::PIXEL_RGBA2BGRA);
 #else
             out.to_pixels((unsigned char*)outimage.data, ncnn::Mat::PIXEL_RGB);
 #endif

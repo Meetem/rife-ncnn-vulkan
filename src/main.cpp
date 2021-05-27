@@ -181,7 +181,7 @@ static int decode_image(const path_t& imagepath, ncnn::Mat& image, int* webp)
         return -1;
     }
 
-    image = ncnn::Mat(w, h, (void*)pixeldata, (size_t)3, 3);
+    image = ncnn::Mat(w, h, (void*)pixeldata, (size_t)4, 4);
 
     return 0;
 }
@@ -326,7 +326,7 @@ void* load(void* args)
 
         if (ret0 != 0 || ret1 != 1)
         {
-            v.outimage = ncnn::Mat(v.in0image.w, v.in0image.h, (size_t)3, 3);
+            v.outimage = ncnn::Mat(v.in0image.w, v.in0image.h, (size_t)4, 4);
             toproc.put(v);
         }
     }
